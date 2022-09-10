@@ -1,0 +1,127 @@
+-- View the datasets
+
+SELECT * 
+FROM dbo.Dataset1
+
+SELECT * 
+FROM dbo.Dataset2
+
+-- Calculate the number of rows in dataset 
+
+SELECT COUNT(*) AS "Total Rows"
+FROM dataset1
+
+SELECT COUNT(*) AS "Total Rows"
+FROM dataset2
+
+-- Dataset for Bihar and Jharkhand
+
+SELECT * 
+FROM dbo.Dataset1
+WHERE State IN ('Bihar','Jharkhand')
+
+-- Population of India
+
+SELECT SUM(Population) AS Total_Population 
+FROM dbo.DataSet2
+
+-- Average Growth for the country as a Percentage
+
+SELECT AVG(Growth)*100 AS Average_Growth
+FROM dbo.Dataset1
+
+-- Average Growth per State in order of Highest
+
+SELECT State, AVG(Growth)*100 AS Average_Growth
+FROM dbo.Dataset1
+GROUP BY State
+ORDER BY Average_Growth
+DESC
+
+-- Average Sex Ratio per State in order - highest to lowest
+
+SELECT State, ROUND(AVG(Sex_Ratio),0) AS Average_Sex_Ratio
+FROM dbo.Dataset1
+GROUP BY State
+ORDER BY Average_Sex_Ratio
+DESC
+
+-- Average Literacy rate
+
+SELECT State, ROUND(AVG(Literacy),0) AS Average_Literacy_Rate
+FROM dbo.Dataset1
+GROUP BY State
+ORDER BY Average_Literacy_Rate
+DESC
+
+-- Average Literacy rate over 90
+
+SELECT State, ROUND(AVG(Literacy),0) AS Average_Literacy_Rate
+FROM dbo.Dataset1
+GROUP BY State
+HAVING ROUND(AVG(Literacy),0)>90
+ORDER BY Average_Literacy_Rate
+DESC
+
+-- TOP 3 States with Highest Growth Ratio
+
+SELECT TOP 3 State, AVG(Growth)*100 AS Average_Growth
+FROM dbo.Dataset1
+GROUP BY State
+ORDER BY Average_Growth
+DESC
+
+-- Top and Bottom 3 states in literacy 
+
+CREATE TABLE #TopStates
+( state nvarchar(255),
+  topstates float
+  )
+
+INSERT INTO #TopStates
+SELECT State, ROUND(AVG(Literacy),0) AS Average_Literacy_Ratio
+FROM dbo.Dataset1
+GROUP BY State
+ORDER BY Average_Literacy_Ratio
+DESC
+
+SELECT TOP 3 *
+FROM #TopStates
+ORDER BY #TopStates.topstates desc
+
+CREATE TABLE #BottomStates
+( state nvarchar(255),
+  bottomstates float
+  )
+
+INSERT INTO #BottomStates
+SELECT State, ROUND(AVG(Literacy),0) AS Average_Literacy_Ratio
+FROM dbo.Dataset1
+GROUP BY State
+ORDER BY Average_Literacy_Ratio
+DESC
+
+SELECT TOP 3 *
+FROM #BottomStates
+ORDER BY #BottomStates.bottomstates ASC
+
+
+ -- UNION the 2 Tables* 
+SELECT * 
+FROM (
+SELECT TOP 3 *
+FROM #TopStates
+ORDER BY #TopStates.topstates desc) a
+UNION
+SELECT * 
+FROM (
+SELECT TOP 3 *
+FROM #BottomStates
+ORDER BY #BottomStates.bottomstates ASC) b
+
+-- Remove States starting with letter 'A'
+
+SELECT DISTINCT State
+FROM dbo.Dataset1
+WHERE State LIKE 'A%'
+
